@@ -1,0 +1,106 @@
+[gd_scene load_steps=7 format=3 uid="uid://s5ltft1oywjf"]
+
+[ext_resource type="Script" uid="uid://b34qqvp6smaok" path="res://script/ui_card.gd" id="1_f2it6"]
+[ext_resource type="Texture2D" uid="uid://bgebm8uu2fy2k" path="res://image/frame0.png" id="2_3lfop"]
+[ext_resource type="Texture2D" uid="uid://dv81ovijjaha2" path="res://image/bg0.png" id="3_p06ba"]
+[ext_resource type="Texture2D" uid="uid://btg1tci57ww2w" path="res://image/check_mark_0.png" id="4_gy3d0"]
+
+[sub_resource type="FontFile" id="FontFile_y84q4"]
+subpixel_positioning = 0
+msdf_pixel_range = 14
+msdf_size = 128
+cache/0/8/0/ascent = 0.0
+cache/0/8/0/descent = 0.0
+cache/0/8/0/underline_position = 0.0
+cache/0/8/0/underline_thickness = 0.0
+cache/0/8/0/scale = 1.0
+cache/0/16/0/ascent = 0.0
+cache/0/16/0/descent = 0.0
+cache/0/16/0/underline_position = 0.0
+cache/0/16/0/underline_thickness = 0.0
+cache/0/16/0/scale = 1.0
+
+[sub_resource type="LabelSettings" id="LabelSettings_ltsr8"]
+font = SubResource("FontFile_y84q4")
+
+[node name="Card" type="Control"]
+clip_contents = true
+custom_minimum_size = Vector2(64, 64)
+layout_mode = 3
+anchors_preset = 0
+offset_right = 100.0
+offset_bottom = 100.0
+script = ExtResource("1_f2it6")
+
+[node name="frame" type="NinePatchRect" parent="."]
+self_modulate = Color(0.5, 0.5, 0.5, 1)
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+texture = ExtResource("2_3lfop")
+patch_margin_left = 3
+patch_margin_top = 3
+patch_margin_right = 3
+patch_margin_bottom = 3
+
+[node name="bg" type="NinePatchRect" parent="."]
+self_modulate = Color(1, 1, 1, 0.09803922)
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+texture = ExtResource("3_p06ba")
+patch_margin_left = 3
+patch_margin_top = 3
+patch_margin_right = 3
+patch_margin_bottom = 3
+
+[node name="icon" type="TextureRect" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = -3.0
+offset_top = -3.0
+offset_right = -3.0
+offset_bottom = -3.0
+grow_horizontal = 2
+grow_vertical = 2
+scale = Vector2(0.8, 0.8)
+pivot_offset = Vector2(50, 50)
+mouse_filter = 2
+expand_mode = 2
+
+[node name="label" type="Label" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+text = "Test"
+label_settings = SubResource("LabelSettings_ltsr8")
+horizontal_alignment = 1
+vertical_alignment = 2
+autowrap_mode = 3
+
+[node name="marker" type="NinePatchRect" parent="."]
+visible = false
+self_modulate = Color(9.912463, 9.912463, 9.912463, 0.57254905)
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+pivot_offset = Vector2(50, 50)
+texture = ExtResource("4_gy3d0")
+patch_margin_left = 9
+patch_margin_top = 9
+patch_margin_right = 9
+patch_margin_bottom = 9
