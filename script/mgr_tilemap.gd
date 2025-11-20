@@ -3,30 +3,20 @@ extends Node2D
 @onready var mgr_input = $"../Input"
 @onready var mgr_ui = $"../UI"
 @onready var wtml: TileMapLayer = $WorldTileMapLayer
+@onready var vtml: TileMapLayer = $WorldTileMapLayer/VisualTileMapLayer
 @onready var tile_set_visual = preload("res://tileset/tile_set_visual.tres")
 @onready var tile_set_debug = preload("res://tileset/debug.tres")
 
 var curr_sid: int = -1
-var vtml: TileMapLayer = null
 var area_start_cc
 var area_end_cc
 const SID_CAPACITY = 100
 
 func _ready() -> void:
-	# 连接信号
 	mgr_input.connect("sgl_click", on_click)
 	mgr_input.connect("sgl_drag", on_mouse_drag)
 	mgr_ui.connect("sgl_ui_card_selected", on_ui_card_selected)
-	# 创建显示层
-	create_visual_tilmap_layer()
 
-func create_visual_tilmap_layer() -> void:	
-	if vtml == null:
-		vtml = TileMapLayer.new()
-		vtml.position = Vector2(8,0) 
-		vtml.tile_set = tile_set_visual
-		vtml.y_sort_enabled = true
-		wtml.add_child(vtml)
 
 func on_ui_card_selected(sid: int, _count: int) -> void:
 	curr_sid = sid
@@ -87,13 +77,13 @@ func update_visual_cell(wcc: Vector2i, sid:int = curr_sid) -> void:
 	if is_add:
 		for vcc in vcc_arr:
 			TilemapUtils.set_cell(vtml,vcc,sid)
-		refresh_neighbors(wcc)
+		refresh_wc_nc(wcc)
 	else:
 		for vcc in vcc_arr:
 			vtml.erase_cell(vcc)
-		refresh_neighbors(wcc)
+		refresh_wc_nc(wcc)
 
-func refresh_neighbors(wcc:Vector2i,sid:int = curr_sid)->void:
+func refresh_wc_nc(wcc:Vector2i,sid:int = curr_sid)->void:
 	var is_add = wtml.get_used_cells().has(wcc)
 	var need_refresh_cc_dic = TilemapUtils.get_used_neighbors_by_sid(wcc,sid,wtml,is_add)
 	if is_add: need_refresh_cc_dic.set(wcc,8)
@@ -101,7 +91,7 @@ func refresh_neighbors(wcc:Vector2i,sid:int = curr_sid)->void:
 		var vccs = TilemapUtils.get_wcc_vcc_list(cc)
 		for vcc in vccs:
 			sid = vtml.get_cell_source_id(vcc)
-			var idx = TilemapUtils.get_vcc_index(vcc,cc)	
+			var idx = TilemapUtils.get_vcc_index(vcc,cc)
 			var ac_str = "00000000" + "|" + str(idx)
 			var ac = vtml.get_cell_atlas_coords(vcc)
 			#ac.x = randi() % 2  

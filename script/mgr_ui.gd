@@ -4,7 +4,6 @@ signal sgl_ui_card_selected(sid:int, card_count:int)
 
 @onready var cursor_normal: Texture2D = preload("res://image/cursor_normal.png")
 @onready var cursor_pan: Texture2D = preload("res://image/cursor_pan.png")
-@onready var cursor : Sprite2D = $Cursor
 @onready var wtml : TileMapLayer = $"../Tilemap/WorldTileMapLayer"
 @onready var grid_container: GridContainer = $"../../CanvasLayer/Panel/ScrollContainer/GridContainer"
 @onready var color_picker_button : ColorPickerButton = $"../../CanvasLayer/Panel/ColorPickerButton"

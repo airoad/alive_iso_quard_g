@@ -1,0 +1,167 @@
+[gd_scene load_steps=15 format=3 uid="uid://iqyu0a64eqma"]
+
+[ext_resource type="Script" uid="uid://duvs38lyp6hot" path="res://script/ui_panel.gd" id="1_2q7ki"]
+[ext_resource type="Texture2D" uid="uid://bgebm8uu2fy2k" path="res://image/frame0.png" id="2_mljll"]
+[ext_resource type="Texture2D" uid="uid://c8y0wgx83kpby" path="res://image/frame1.png" id="3_imnys"]
+[ext_resource type="Script" uid="uid://dbysro7cxr80m" path="res://script/mgr_input.gd" id="4_od8h8"]
+[ext_resource type="Script" uid="uid://dgt6hndexjvtv" path="res://script/mgr_tilemap.gd" id="5_b4cxm"]
+[ext_resource type="TileSet" uid="uid://04fyhvpbisfa" path="res://tileset/ui.tres" id="6_3nhgu"]
+[ext_resource type="Script" uid="uid://cmx2d0p1cyflv" path="res://script/mgr_ui.gd" id="7_0s5vs"]
+[ext_resource type="TileSet" uid="uid://dwyfcfai0h0si" path="res://tileset/tile_set_visual.tres" id="7_mljll"]
+[ext_resource type="Texture2D" uid="uid://bul5m0bxj7yip" path="res://image/unit_32_shadow.png" id="9_imnys"]
+[ext_resource type="Script" uid="uid://cfpdog32b0qya" path="res://script/mgr_camera.gd" id="9_unkso"]
+[ext_resource type="Texture2D" uid="uid://dke3c40eld7if" path="res://image/unit_16.png" id="10_e1dtk"]
+[ext_resource type="Texture2D" uid="uid://b7jqxpgkvtpi5" path="res://image/unit_16_shadow.png" id="10_od8h8"]
+[ext_resource type="Texture2D" uid="uid://cwixq656e2hht" path="res://image/unit_32.png" id="11_rvhse"]
+
+[sub_resource type="TileSet" id="TileSet_4j5ol"]
+tile_shape = 1
+tile_layout = 4
+tile_size = Vector2i(32, 16)
+
+[node name="World" type="Node2D"]
+texture_filter = 1
+texture_repeat = 1
+
+[node name="CanvasLayer" type="CanvasLayer" parent="."]
+
+[node name="Panel" type="Panel" parent="CanvasLayer"]
+self_modulate = Color(1, 1, 1, 0)
+anchors_preset = 1
+anchor_left = 1.0
+anchor_right = 1.0
+offset_left = -274.0
+offset_bottom = 136.0
+grow_horizontal = 0
+size_flags_horizontal = 3
+size_flags_vertical = 3
+mouse_filter = 1
+script = ExtResource("1_2q7ki")
+
+[node name="Frame" type="NinePatchRect" parent="CanvasLayer/Panel"]
+self_modulate = Color(1, 1, 1, 0.68235296)
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+texture = ExtResource("2_mljll")
+patch_margin_left = 3
+patch_margin_top = 3
+patch_margin_right = 3
+patch_margin_bottom = 3
+
+[node name="ScrollContainer" type="ScrollContainer" parent="CanvasLayer/Panel"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = 1.9999634
+offset_top = 2.0
+offset_right = 11.9999695
+offset_bottom = 5.0
+grow_horizontal = 2
+grow_vertical = 2
+scale = Vector2(0.95, 0.95)
+mouse_filter = 2
+
+[node name="GridContainer" type="GridContainer" parent="CanvasLayer/Panel/ScrollContainer"]
+layout_mode = 2
+mouse_filter = 0
+theme_override_constants/h_separation = 6
+theme_override_constants/v_separation = 6
+columns = 4
+
+[node name="ColorPickerButton" type="ColorPickerButton" parent="CanvasLayer/Panel"]
+layout_mode = 0
+offset_left = -32.0
+offset_bottom = 32.0
+color = Color(1, 1, 1, 1)
+
+[node name="AreaFrame" type="NinePatchRect" parent="CanvasLayer"]
+visible = false
+texture_filter = 1
+offset_left = 698.0
+offset_top = 502.0
+offset_right = 724.0
+offset_bottom = 513.0
+texture = ExtResource("3_imnys")
+patch_margin_left = 1
+patch_margin_top = 1
+patch_margin_right = 1
+patch_margin_bottom = 1
+
+[node name="Manager" type="Node2D" parent="."]
+
+[node name="Input" type="Node2D" parent="Manager"]
+script = ExtResource("4_od8h8")
+
+[node name="Tilemap" type="Node2D" parent="Manager"]
+script = ExtResource("5_b4cxm")
+
+[node name="WorldTileMapLayer" type="TileMapLayer" parent="Manager/Tilemap"]
+tile_set = SubResource("TileSet_4j5ol")
+
+[node name="VisualTileMapLayer" type="TileMapLayer" parent="Manager/Tilemap/WorldTileMapLayer"]
+y_sort_enabled = true
+position = Vector2(8, 0)
+tile_map_data = PackedByteArray(0, 0, 2, 0, 0, 0, 200, 0, 0, 0, 0, 0, 0, 0, 1, 0, 1, 0, 200, 0, 0, 0, 2, 0, 0, 0, 2, 0, 1, 0, 200, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 200, 0, 0, 0, 3, 0, 0, 0)
+tile_set = ExtResource("7_mljll")
+
+[node name="Unit" type="Node2D" parent="Manager/Tilemap/WorldTileMapLayer/VisualTileMapLayer"]
+y_sort_enabled = true
+position = Vector2(-8, 0)
+
+[node name="Unit_32" type="CharacterBody2D" parent="Manager/Tilemap/WorldTileMapLayer/VisualTileMapLayer/Unit"]
+y_sort_enabled = true
+position = Vector2(32, 0)
+
+[node name="Body" type="Sprite2D" parent="Manager/Tilemap/WorldTileMapLayer/VisualTileMapLayer/Unit/Unit_32"]
+y_sort_enabled = true
+position = Vector2(0, 8)
+texture = ExtResource("11_rvhse")
+offset = Vector2(0, -28)
+
+[node name="Shadow" type="Sprite2D" parent="Manager/Tilemap/WorldTileMapLayer/VisualTileMapLayer/Unit/Unit_32"]
+y_sort_enabled = true
+position = Vector2(0, 7)
+texture = ExtResource("9_imnys")
+offset = Vector2(0, -11)
+
+[node name="Collider" type="CollisionPolygon2D" parent="Manager/Tilemap/WorldTileMapLayer/VisualTileMapLayer/Unit/Unit_32"]
+visible = false
+polygon = PackedVector2Array(0, -8, 16, 0, 0, 8, -16, 0)
+
+[node name="Unit_16" type="CharacterBody2D" parent="Manager/Tilemap/WorldTileMapLayer/VisualTileMapLayer/Unit"]
+y_sort_enabled = true
+
+[node name="Body" type="Sprite2D" parent="Manager/Tilemap/WorldTileMapLayer/VisualTileMapLayer/Unit/Unit_16"]
+y_sort_enabled = true
+position = Vector2(0, 8)
+texture = ExtResource("10_e1dtk")
+offset = Vector2(0, -16)
+
+[node name="Shadow" type="Sprite2D" parent="Manager/Tilemap/WorldTileMapLayer/VisualTileMapLayer/Unit/Unit_16"]
+y_sort_enabled = true
+position = Vector2(0, 7)
+texture = ExtResource("10_od8h8")
+offset = Vector2(0, -7)
+
+[node name="Collider" type="CollisionPolygon2D" parent="Manager/Tilemap/WorldTileMapLayer/VisualTileMapLayer/Unit/Unit_16"]
+visible = false
+polygon = PackedVector2Array(0, -8, 16, 0, 0, 8, -16, 0)
+
+[node name="UITileMapLayer" type="TileMapLayer" parent="Manager/Tilemap"]
+tile_set = ExtResource("6_3nhgu")
+
+[node name="UI" type="Node2D" parent="Manager"]
+script = ExtResource("7_0s5vs")
+
+[node name="Camera" type="Node2D" parent="Manager"]
+script = ExtResource("9_unkso")
+
+[node name="Camera2D" type="Camera2D" parent="Manager/Camera"]
+texture_filter = 1
+texture_repeat = 1
+zoom = Vector2(3, 3)
