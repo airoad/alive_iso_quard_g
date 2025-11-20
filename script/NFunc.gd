@@ -1,4 +1,4 @@
-class_name NFucn  # 类名，全局可引用
+class_name NFunc  # 类名，全局可引用
 extends RefCounted  # 继承RefCounted，支持字典存储，避免内存泄漏
 
 static func scan_directory(dir_path: String, ex: String) -> Dictionary:
@@ -12,24 +12,21 @@ static func scan_directory(dir_path: String, ex: String) -> Dictionary:
 	var current_entry = dir.get_next()
 	while current_entry != "":
 		var full_path = dir.get_current_dir() + "/" + current_entry
-		
 		# 筛选.tres文件并尝试加载为TileSet
 		if dir.file_exists(full_path) and current_entry.ends_with(ex):
-			var loaded_tileset = load(full_path)
-			if loaded_tileset:
-				dic[full_path] = loaded_tileset
-				#print("加载成功：", full_path)  # 调试用
-				
+			var loaded_asset = load(full_path)
+			if loaded_asset:
+				dic[full_path] = loaded_asset
 		current_entry = dir.get_next()
 	dir.list_dir_end()
 	return dic
 
 static func get_vcc_dic(wcc:Vector2i)->Dictionary[int,Vector2i]:
 	var out:Dictionary[int,Vector2i] = {
-		0:wcc*2+Vector2i(0,0), 
-		1:wcc*2+Vector2i(0,1), 
-		2:wcc*2+Vector2i(-1,1), 
-		3:wcc*2+Vector2i(-1,0)
+		0:wcc+Vector2i(0,0), 
+		1:wcc+Vector2i(0,1), 
+		2:wcc+Vector2i(-1,1), 
+		3:wcc+Vector2i(-1,0)
 	}
 	return out
 
@@ -62,13 +59,7 @@ static func get_ncc_dic(wcc:Vector2i)->Dictionary[Vector2i,Array]:
 		out.set(vcc, ncc_arr)
 	return out
 
-static func set_visual_cell(tml:TileMapLayer, dic:Dictionary[Vector2i,VCell], color:Color) -> void:
-	tml.modulate = color # 应用选中的颜色
-	tml.clear()
-	# 遍历 VTile 实例，设置 Tile
-	for vcell in dic.values():
-		# 设置 Tile（参数：cell 坐标、源索引、atlas 坐标、变体）
-		tml.set_cell(vcell.coord, vcell.source_id, vcell.atlas_coord, vcell.alter)
+
 
 static func keep_by_index_arr(origin:Array,arr:Array)->Array[int]:
 	var temp:Array[int] = []
@@ -90,6 +81,7 @@ static func str_set_at(original: String, index: int, new_char: String) -> String
 	return s
 
 static func array_remove_duplicates_keep_order_first(arr: Array) -> Array:
+	if arr.is_empty(): return []
 	var fst = arr[0]
 	var unique_arr: Array = []
 	for elem in arr:
@@ -98,6 +90,12 @@ static func array_remove_duplicates_keep_order_first(arr: Array) -> Array:
 			unique_arr.append(elem)
 	unique_arr.set(0,fst)
 	return unique_arr
+
+static func format_sid_arr(arr:Array)->Array:
+	var out = array_remove_duplicates_keep_order_first(arr)
+	out.sort()
+	out.reverse()
+	return out
 
 static func array_to_str(arr:Array, spl:String)->String:
 	var out_str:String =""

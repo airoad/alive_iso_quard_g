@@ -98,7 +98,6 @@ y_sort_enabled = true
 script = ExtResource("3_tqoya")
 
 [node name="Tilemap" type="Node2D" parent="Manager"]
-y_sort_enabled = true
 script = ExtResource("4_of57s")
 
 [node name="WorldTileMapLayer" type="TileMapLayer" parent="Manager/Tilemap"]

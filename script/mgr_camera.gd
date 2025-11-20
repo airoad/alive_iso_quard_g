@@ -4,7 +4,7 @@ extends Node2D
 @onready var camera : Camera2D = $Camera2D
 
 var zoom = 1
-var zoom_range : Vector2i = Vector2i(1, 8)
+var zoom_range : Vector2i = Vector2i(2, 8)
 var fst_mouse_position : Vector2 = Vector2(0,0)
 var scd_mouse_position : Vector2 = Vector2(0,0)
 

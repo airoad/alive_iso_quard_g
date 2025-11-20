@@ -39,17 +39,13 @@ func change_cursor(texture:Texture2D) -> void:
 		Input.set_custom_mouse_cursor(texture, Input.CURSOR_ARROW, hotspot)
 
 func update_cursor_pos() -> void:
-	var mp = get_global_mouse_position()
-	var cc = wtml.local_to_map(mp)
-	#mp = wtml.map_to_local(cc)
+	var cc = wtml.local_to_map(get_global_mouse_position())
 	if mouse_on_ui:
 		utml.clear()
 		return
 	else :
 		utml.clear()
 		utml.set_cell(cc,0,Vector2i.ZERO,0)
-		
-	#cursor.position = mp
 
 func on_mouse_on_card(phase:bool)->void:
 	mouse_on_ui = phase
@@ -59,8 +55,8 @@ func on_mouse_in_out_panel(phase:bool)->void:
 
 	
 func handle_icon_dic() -> void:
-	icon_dic = NFucn.scan_directory("res://source_id_icon/", ".png")
-	if icon_dic.size() <= 0: return
+	icon_dic = NFunc.scan_directory("res://source_id_icon/", ".png")
+	if icon_dic.is_empty(): return
 	
 	clear_chiildren(grid_container)
 	all_card.clear()
@@ -68,11 +64,8 @@ func handle_icon_dic() -> void:
 	for path in icon_dic:
 		var sid:int = int(path.get_file().get_basename())
 		var icon_instance:Texture2D = icon_dic[path]
-		# 加载卡片场景（替换为你的卡片场景路径）
 		var card = card_scene.instantiate()
-		# 给卡片设置参数
 		card.sid = sid
-		## 设置预览图（TileSet 用第一个瓦片的纹理作为预览）
 		card.icon_texture = icon_instance
 		
 		## 连接卡片的选中信号

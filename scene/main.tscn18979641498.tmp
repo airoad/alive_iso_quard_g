@@ -1,4 +1,4 @@
-[gd_scene load_steps=13 format=4 uid="uid://iqyu0a64eqma"]
+[gd_scene load_steps=13 format=3 uid="uid://iqyu0a64eqma"]
 
 [ext_resource type="Script" uid="uid://duvs38lyp6hot" path="res://script/ui_panel.gd" id="1_b5f6u"]
 [ext_resource type="Texture2D" uid="uid://bgebm8uu2fy2k" path="res://image/frame0.png" id="1_of57s"]
@@ -18,8 +18,6 @@ tile_layout = 4
 tile_size = Vector2i(32, 16)
 
 [node name="World" type="Node2D"]
-texture_filter = 1
-texture_repeat = 1
 
 [node name="CanvasLayer" type="CanvasLayer" parent="."]
 
@@ -98,14 +96,15 @@ y_sort_enabled = true
 script = ExtResource("3_tqoya")
 
 [node name="Tilemap" type="Node2D" parent="Manager"]
-y_sort_enabled = true
 script = ExtResource("4_of57s")
 
 [node name="WorldTileMapLayer" type="TileMapLayer" parent="Manager/Tilemap"]
 tile_set = SubResource("TileSet_4j5ol")
 
+[node name="EffectTileMapLayer" type="TileMapLayer" parent="Manager/Tilemap"]
+tile_set = ExtResource("4_p1hux")
+
 [node name="UITileMapLayer" type="TileMapLayer" parent="Manager/Tilemap"]
-tile_map_data = PackedByteArray("AAD9//3/AAAAAAAAAAD9//z/AAAAAAAAAAD+//3/AAAAAAAAAAD9//7/AAAAAAAAAAD8//3/AAAAAAAAAAD7//z/AAAAAAAAAAD7//3/AAAAAAAAAAD7//7/AAAAAAAAAAD5//3/AAAAAAAAAAD3/wAAAAAAAAAAAAA=")
 tile_set = ExtResource("4_p1hux")
 
 [node name="UI" type="Node2D" parent="Manager"]
