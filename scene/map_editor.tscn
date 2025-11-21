@@ -1,4 +1,4 @@
-[gd_scene load_steps=15 format=3 uid="uid://iqyu0a64eqma"]
+[gd_scene load_steps=15 format=4 uid="uid://iqyu0a64eqma"]
 
 [ext_resource type="Script" uid="uid://duvs38lyp6hot" path="res://script/ui_panel.gd" id="1_2q7ki"]
 [ext_resource type="Texture2D" uid="uid://bgebm8uu2fy2k" path="res://image/frame0.png" id="2_mljll"]
@@ -106,7 +106,7 @@ tile_set = SubResource("TileSet_4j5ol")
 [node name="VisualTileMapLayer" type="TileMapLayer" parent="Manager/Tilemap/WorldTileMapLayer"]
 y_sort_enabled = true
 position = Vector2(8, 0)
-tile_map_data = PackedByteArray(0, 0, 2, 0, 0, 0, 200, 0, 0, 0, 0, 0, 0, 0, 1, 0, 1, 0, 200, 0, 0, 0, 2, 0, 0, 0, 2, 0, 1, 0, 200, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 200, 0, 0, 0, 3, 0, 0, 0)
+tile_map_data = PackedByteArray("AAACAAAAyAAAAAAAAAABAAEAyAAAAAIAAAACAAEAyAAAAAEAAAABAAAAyAAAAAMAAAAAAAAAZAAAAAAAAAAAAAEAZAAAAAEAAAD//wEAZAAAAAIAAAD//wAAZAAAAAMAAAA=")
 tile_set = ExtResource("7_mljll")
 
 [node name="Unit" type="Node2D" parent="Manager/Tilemap/WorldTileMapLayer/VisualTileMapLayer"]

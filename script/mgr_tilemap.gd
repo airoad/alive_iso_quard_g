@@ -22,11 +22,11 @@ func on_ui_card_selected(sid: int, _count: int) -> void:
 	curr_sid = sid
 
 func on_click(_wp: Vector2, control: String) -> void:
-	handle_tile_data([wtml.local_to_map(get_local_mouse_position())], control)
+	handle_tile_data([{wtml.local_to_map(get_local_mouse_position()):true}], control)
 	
 func on_mouse_drag(wp: Vector2, phase: String, control: String, shift: String) -> void:
 	if phase == "dragging" and shift == "just_released_shift":
-		handle_tile_data([wtml.local_to_map(get_local_mouse_position())], control)
+		handle_tile_data([{wtml.local_to_map(get_local_mouse_position()):true}], control)
 	if shift == "just_released_shift": return
 	match phase:
 		"start_dragging":
@@ -38,65 +38,87 @@ func on_mouse_drag(wp: Vector2, phase: String, control: String, shift: String) -
 		"end_dragging":
 			if not control == "just_released_middle": 
 				area_end_cc = wtml.local_to_map(wp)
-				var wccs:Array[Vector2i] = TilemapUtils.get_all_cc_in_rect(area_start_cc,area_end_cc)
+				var wccs:Array[Dictionary] = TMLUtils.get_all_cc_in_world_rect(area_start_cc,area_end_cc)
 				handle_tile_data(wccs, control)
 
-func handle_tile_data(wccs: Array[Vector2i], control: String) -> void:
+func handle_tile_data(wccs: Array[Dictionary], control: String) -> void:
 	if wccs.is_empty(): return
 	if curr_sid == -1 || vtml == null:
 		return
 	if control in ["just_middle", "pressing_middle", "just_released_middle"]:
 		return
 	
-	for wcc in wccs: 
+	for wcc_border_state_dic in wccs: 
 		# 左键：生成VC
 		if control in ["pressing_left", "just_released_left"]:
-			generate_visual_cells(wcc)
+			generate_visual_cells(wcc_border_state_dic)
 		# 右键：删除VC
 		elif control in ["pressing_right", "just_released_right"]:
-			remove_visual_cell(wcc)
+			remove_visual_cell(wcc_border_state_dic)
 
 # 生成VC
-func generate_visual_cells(wcc: Vector2i, sid:int = curr_sid) -> void:
+func generate_visual_cells(wcc_border_state_dic: Dictionary, sid:int = curr_sid) -> void:
+	var wcc = wcc_border_state_dic.keys()[0]
 	if wtml.get_used_cells().has(wcc):
 		var source_id = wtml.get_cell_source_id(wcc)
 		if source_id != sid:
 			wtml.erase_cell(wcc)
-			update_visual_cell(wcc)
-	TilemapUtils.set_cell(wtml,wcc,sid)
-	update_visual_cell(wcc)
+			update_visual_cell(wcc_border_state_dic)
+	TMLUtils.set_cell(wtml,wcc,sid)
+	update_visual_cell(wcc_border_state_dic)
 
 # 删除VC
-func remove_visual_cell(wcc: Vector2i, _sid:int = curr_sid) -> void:
+func remove_visual_cell(wcc_border_state_dic: Dictionary, _sid:int = curr_sid) -> void:
+	var wcc = wcc_border_state_dic.keys()[0]
 	wtml.erase_cell(wcc)
-	update_visual_cell(wcc)
+	update_visual_cell(wcc_border_state_dic)
 
-func update_visual_cell(wcc: Vector2i, sid:int = curr_sid) -> void:
+func update_visual_cell(wcc_border_state_dic: Dictionary, sid:int = curr_sid) -> void:
+	var wcc = wcc_border_state_dic.keys()[0]
 	var is_add = wtml.get_used_cells().has(wcc)
-	var vcc_arr = TilemapUtils.get_wcc_vcc_list(wcc)
+	var vcc_arr = TMLUtils.get_vcc_list_in_wcc(wcc)
 	if is_add:
 		for vcc in vcc_arr:
-			TilemapUtils.set_cell(vtml,vcc,sid)
-		refresh_wc_nc(wcc)
+			TMLUtils.set_cell(vtml,vcc,sid)
+		refresh_wc_nc(wcc_border_state_dic)
 	else:
 		for vcc in vcc_arr:
 			vtml.erase_cell(vcc)
-		refresh_wc_nc(wcc)
+		refresh_wc_nc(wcc_border_state_dic)
 
-func refresh_wc_nc(wcc:Vector2i,sid:int = curr_sid)->void:
+func refresh_wc_nc(wcc_border_state_dic:Dictionary,sid:int = curr_sid)->void:
+	var wcc = wcc_border_state_dic.keys()[0]
 	var is_add = wtml.get_used_cells().has(wcc)
-	var need_refresh_cc_dic = TilemapUtils.get_used_neighbors_by_sid(wcc,sid,wtml,is_add)
-	if is_add: need_refresh_cc_dic.set(wcc,8)
-	for cc in need_refresh_cc_dic:
-		var vccs = TilemapUtils.get_wcc_vcc_list(cc)
-		for vcc in vccs:
+	if is_add: # 如果增加 先将增加的vcc刷新
+		var border_state = wcc_border_state_dic.values()[0]
+		var vcc_arr = TMLUtils.get_vcc_list_in_wcc(wcc)
+		for vcc in vcc_arr:
 			sid = vtml.get_cell_source_id(vcc)
-			var idx = TilemapUtils.get_vcc_index(vcc,cc)
-			var ac_str = "00000000" + "|" + str(idx)
 			var ac = vtml.get_cell_atlas_coords(vcc)
 			#ac.x = randi() % 2  
-			var nvcc_idxs = TilemapUtils.get_used_neighbors_by_sid(vcc,sid,vtml).values()
-			for i in nvcc_idxs:
-				ac_str[i] = "1"
-			ac.y = TilemapUtils.EDGE_STR_AC_DIC[ac_str]
-			TilemapUtils.set_cell(vtml,vcc,sid,ac)
+			if border_state: #边界的vcc需要计算ac
+				var idx = TMLUtils.get_idx_of_vcc(vcc,wcc)
+				var ac_str = "00000000" + "|" + str(idx)
+				var nvcc_idxs = TMLUtils.get_used_neighbors_by_sid(vcc,sid,vtml).values()
+				for i in nvcc_idxs:
+					ac_str[i] = "1"
+				ac.y = TMLUtils.EDGE_STR_AC_DIC[ac_str]
+			else:#非边界直接用12
+				ac.y = 12
+			TMLUtils.set_cell(vtml,vcc,sid,ac)
+	#更新邻居
+	var need_refresh_ncc_dic = TMLUtils.get_used_neighbors_by_sid(wcc,sid,wtml,is_add)
+	for ncc in need_refresh_ncc_dic:
+		var nvccs = TMLUtils.get_vcc_list_in_wcc(ncc)
+		for nvcc in nvccs:
+			var nsid = vtml.get_cell_source_id(nvcc)
+			var nac = vtml.get_cell_atlas_coords(nvcc)
+			if not (nsid == sid and nac.y == 12):
+				var nidx = TMLUtils.get_idx_of_vcc(nvcc,ncc)
+				var nac_str = "00000000" + "|" + str(nidx)
+				#ac.x = randi() % 2  
+				var nvcc_idxs = TMLUtils.get_used_neighbors_by_sid(nvcc,nsid,vtml).values()
+				for i in nvcc_idxs:
+					nac_str[i] = "1"
+				nac.y = TMLUtils.EDGE_STR_AC_DIC[nac_str]
+				TMLUtils.set_cell(vtml,nvcc,nsid,nac)
