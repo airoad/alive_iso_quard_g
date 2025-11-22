@@ -1,4 +1,4 @@
-[gd_scene load_steps=15 format=3 uid="uid://iqyu0a64eqma"]
+[gd_scene load_steps=14 format=3 uid="uid://iqyu0a64eqma"]
 
 [ext_resource type="Script" uid="uid://duvs38lyp6hot" path="res://script/ui_panel.gd" id="1_2q7ki"]
 [ext_resource type="Texture2D" uid="uid://bgebm8uu2fy2k" path="res://image/frame0.png" id="2_mljll"]
@@ -9,7 +9,6 @@
 [ext_resource type="TileSet" uid="uid://dqacgxno36ay5" path="res://tileset/world_tile_set.tres" id="6_imnys"]
 [ext_resource type="Script" uid="uid://cmx2d0p1cyflv" path="res://script/mgr_ui.gd" id="7_0s5vs"]
 [ext_resource type="Texture2D" uid="uid://bul5m0bxj7yip" path="res://image/unit_32_shadow.png" id="9_imnys"]
-[ext_resource type="Texture2D" uid="uid://ccq3a02ds8p2f" path="res://image/unit_test.png" id="9_od8h8"]
 [ext_resource type="Script" uid="uid://cfpdog32b0qya" path="res://script/mgr_camera.gd" id="9_unkso"]
 [ext_resource type="Texture2D" uid="uid://dke3c40eld7if" path="res://image/unit_16.png" id="10_e1dtk"]
 [ext_resource type="Texture2D" uid="uid://b7jqxpgkvtpi5" path="res://image/unit_16_shadow.png" id="10_od8h8"]
@@ -101,41 +100,21 @@ y_sort_enabled = true
 
 [node name="Unit_32" type="CharacterBody2D" parent="Manager/Tilemap/WorldTileMapLayer/Unit"]
 y_sort_enabled = true
-position = Vector2(32, 16)
+position = Vector2(32, 0)
 
 [node name="Body" type="Sprite2D" parent="Manager/Tilemap/WorldTileMapLayer/Unit/Unit_32"]
 y_sort_enabled = true
-position = Vector2(0, 9)
+position = Vector2(0, 8)
 texture = ExtResource("11_rvhse")
-offset = Vector2(0, -25)
+offset = Vector2(0, -28)
 
 [node name="Shadow" type="Sprite2D" parent="Manager/Tilemap/WorldTileMapLayer/Unit/Unit_32"]
 y_sort_enabled = true
-position = Vector2(0, 8)
+position = Vector2(0, 7)
 texture = ExtResource("9_imnys")
-offset = Vector2(0, -8)
+offset = Vector2(0, -11)
 
 [node name="Collider" type="CollisionPolygon2D" parent="Manager/Tilemap/WorldTileMapLayer/Unit/Unit_32"]
-visible = false
-polygon = PackedVector2Array(0, -8, 16, 0, 0, 8, -16, 0)
-
-[node name="Unit_Test" type="CharacterBody2D" parent="Manager/Tilemap/WorldTileMapLayer/Unit"]
-y_sort_enabled = true
-position = Vector2(64, 16)
-
-[node name="Body" type="Sprite2D" parent="Manager/Tilemap/WorldTileMapLayer/Unit/Unit_Test"]
-y_sort_enabled = true
-position = Vector2(0, 9)
-texture = ExtResource("9_od8h8")
-offset = Vector2(1, -21)
-
-[node name="Shadow" type="Sprite2D" parent="Manager/Tilemap/WorldTileMapLayer/Unit/Unit_Test"]
-y_sort_enabled = true
-position = Vector2(0, 8)
-texture = ExtResource("9_imnys")
-offset = Vector2(0.595, -8)
-
-[node name="Collider" type="CollisionPolygon2D" parent="Manager/Tilemap/WorldTileMapLayer/Unit/Unit_Test"]
 visible = false
 polygon = PackedVector2Array(0, -8, 16, 0, 0, 8, -16, 0)
 
@@ -144,22 +123,21 @@ y_sort_enabled = true
 
 [node name="Body" type="Sprite2D" parent="Manager/Tilemap/WorldTileMapLayer/Unit/Unit_16"]
 y_sort_enabled = true
-position = Vector2(0, 9)
+position = Vector2(0, 8)
 texture = ExtResource("10_e1dtk")
-offset = Vector2(0, -17)
+offset = Vector2(0, -16)
 
 [node name="Shadow" type="Sprite2D" parent="Manager/Tilemap/WorldTileMapLayer/Unit/Unit_16"]
 y_sort_enabled = true
-position = Vector2(0, 8)
+position = Vector2(0, 7)
 texture = ExtResource("10_od8h8")
-offset = Vector2(0, -8)
+offset = Vector2(0, -7)
 
 [node name="Collider" type="CollisionPolygon2D" parent="Manager/Tilemap/WorldTileMapLayer/Unit/Unit_16"]
 visible = false
 polygon = PackedVector2Array(0, -8, 16, 0, 0, 8, -16, 0)
 
 [node name="UITileMapLayer" type="TileMapLayer" parent="Manager/Tilemap"]
-z_index = 100
 tile_set = ExtResource("6_3nhgu")
 
 [node name="UI" type="Node2D" parent="Manager"]

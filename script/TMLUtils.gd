@@ -90,16 +90,15 @@ static func get_all_cc_in_screen_rect(start: Vector2i, end: Vector2i) -> Array[V
 	return cc
 
 # 获取区域内所有cell coord。考虑的是世界空间矩形区域
-static func get_all_cc_in_world_rect(start: Vector2i, end: Vector2i) -> Array[Dictionary]:
-	var ccs:Array[Dictionary] = []
+static func get_all_cc_in_world_rect(start: Vector2i, end: Vector2i) -> Array[Vector2i]:
+	var ccs:Array[Vector2i] = []
 	var step = (end - start).sign()
 	step.x = 1 if step.x == 0 else step.x
 	step.y = 1 if step.y == 0 else step.y
 	for y in range(start.y,end.y+step.y,step.y):
 		for x in range(start.x,end.x+step.x,step.x):
 			var cc = Vector2i(x,y)
-			var at_border = (x == start.x || x == end.x || y == start.y || y == end.y)
-			ccs.append({cc:at_border})
+			ccs.append(cc)
 	return ccs
 	
 # isometric 中，get_suround_cells 得到的是4方向邻居故不采用 key:ncc value:ncc pos index (0-7)
@@ -169,5 +168,67 @@ static func get_vcc_atlas_y(vcc: Vector2i, wcc: Vector2i, sid: int, is_border: b
 	for i in nvcc_idxs:
 		ac_array[i] = "1"
 	var final_ac_str = "".join(ac_array) + "|" + str(idx) # <-- 字符串只拼接一次
+	return EDGE_STR_AC_DIC.get(final_ac_str, 12) # 使用 get(key, default) 避免查找失败
 
-	return TMLUtils.EDGE_STR_AC_DIC.get(final_ac_str, 12) # 使用 get(key, default) 避免查找失败
+#static func get_vcc_atlas_y_by_cache(vcc: Vector2i, wcc: Vector2i, sid: int, is_border: bool, vcc_sid_cache:Dictionary) -> int:
+	#if not is_border:
+		#return 12
+	#var idx = get_idx_of_vcc(vcc, wcc)
+	##if idx == -1 : return 12
+	#var used_neighbors_cache = get_used_neighbors_from_cache(vcc, sid, vcc_sid_cache)
+	#var nvcc_idxs = used_neighbors_cache.values()
+	#var ac_array: Array = ["0","0","0","0","0","0","0","0"] # 使用 Array 避免多次创建字符串
+	#for i in nvcc_idxs:
+		#ac_array[i] = "1"
+	#var final_ac_str = "".join(ac_array) + "|" + str(idx) # <-- 字符串只拼接一次
+	#return EDGE_STR_AC_DIC.get(final_ac_str, 12) # 使用 get(key, default) 避免查找失败
+
+static func get_vcc_atlas_y_by_cache(vcc: Vector2i, sid: int, vcc_sid_border_idx_cache:Dictionary) -> int:
+	if not vcc_sid_border_idx_cache[vcc][2]: # not border vcell
+		return 12
+	var idx = vcc_sid_border_idx_cache[vcc][0]
+	if idx == -1 : return 12
+	
+	var used_neighbors_cache = get_used_neighbors_from_cache(vcc, sid, vcc_sid_border_idx_cache)
+	var nvcc_idxs = used_neighbors_cache.values()
+	var ac_array: Array = ["0","0","0","0","0","0","0","0"] # 使用 Array 避免多次创建字符串
+	for i in nvcc_idxs:
+		ac_array[i] = "1"
+	var final_ac_str = "".join(ac_array) + "|" + str(idx) # <-- 字符串只拼接一次
+	return EDGE_STR_AC_DIC.get(final_ac_str, 12) # 使用 get(key, default) 避免查找失败
+
+
+# 使用缓存 CC_CACHE 查找邻居的使用状态，并返回位置索引
+# CC_CACHE: Key: Vector2i (vcc), Value: int (sid)
+# use_sid:找到sid相同的所有存在的邻居
+# not use_sid:找到所有存在的邻居，不论sid是否一致
+static func get_used_neighbors_from_cache(cc: Vector2i, sid:int, cc_cache: Dictionary, use_sid:bool = true) -> Dictionary:
+	var out: Dictionary = {} # Key: Vector2i (ncc), Value: int (i, the index 0-7)
+	for i in NEIGHBOR_OFFSET_8DIR.size():
+		var offset = NEIGHBOR_OFFSET_8DIR[i] # [cite: 7]
+		var ncc = cc + offset
+		var ncc_sid = cc_cache.get(ncc, -1) # 从缓存中获取邻居 VCC 的 Source ID。如果不存在，则返回 -1
+		if ncc_sid != -1: # vcc存在
+			if use_sid: #考虑sid是否一致
+				if ncc_sid == sid:
+					out[ncc] = i # <-- 确保返回的是索引 i (0-7)
+			else : out[ncc] = i
+	return out
+
+# 获取 CC 列表中所有 VCC 的 Source ID - 用于构建缓存 如果sid是-1说明此vcc不存在，从而避免使用原生的get_used_cells_by_id(sid).has(cc)
+static func get_vcc_sid_dic_of_wcc_arr(cc_arr: Array[Vector2i], tml: TileMapLayer) -> Dictionary:
+	var vcc_sid_dic: Dictionary = {} # Key: Vector2i (vcc), Value: int (sid)
+	for cc in cc_arr:
+		var vcc_list = get_vcc_list_in_wcc(cc)
+		for vcc in vcc_list:
+			var sid = tml.get_cell_source_id(vcc)
+			vcc_sid_dic[vcc] = sid
+	return vcc_sid_dic
+
+static func get_neighbors(wcc:Vector2i)->Array[Vector2i]:
+	var out : Array[Vector2i] = []
+	for i in NEIGHBOR_OFFSET_8DIR.size():
+		var offset = NEIGHBOR_OFFSET_8DIR[i]
+		var ncc = wcc + offset
+		out.append(ncc)
+	return out

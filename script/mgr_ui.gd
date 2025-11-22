@@ -20,7 +20,7 @@ var area_start_cc : Vector2i = Vector2i.ZERO
 var area_start_wcc : Vector2i = Vector2i.ZERO
 var area_end_wcc: Vector2i = Vector2i.ZERO
 var mouse_on_ui:bool = false
-var last_area_wcc_arr:Array[Dictionary] = []
+var last_area_wcc_arr:Array[Vector2i] = []
 var is_shift_dragging:bool = false
 
 # Called when the node enters the scene tree for the first time.
@@ -57,7 +57,7 @@ func on_mouse_in_out_panel(phase:bool)->void:
 	mouse_on_ui = phase
 
 func handle_icon_dic() -> void:
-	icon_dic = NFunc.scan_directory("res://source_id_icon/", ".png")
+	icon_dic = NFunc.scan_directory("res://terrain_icon/", ".png")
 	if icon_dic.is_empty(): return
 	
 	clear_chiildren(grid_container)
@@ -144,14 +144,14 @@ func on_drag_screen_world(_coord: Vector2i, phase : String, control: String, shi
 		"dragging":
 			if not control == "pressing_middle":
 				area_end_wcc = wcc
-				var temp_wcc_arr:Array[Dictionary] = TMLUtils.get_all_cc_in_world_rect(area_start_wcc,area_end_wcc)
+				var temp_wcc_arr:Array[Vector2i] = TMLUtils.get_all_cc_in_world_rect(area_start_wcc,area_end_wcc)
 				if temp_wcc_arr.size() != last_area_wcc_arr.size():
 					last_area_wcc_arr = temp_wcc_arr
 					utml.clear()
 					var aid:int = 0
 					if control in ["pressing_right","just_right"]: aid = 1
-					for area_cc_dic in last_area_wcc_arr:
-						TMLUtils.set_cell(utml,area_cc_dic.keys()[0],0,Vector2i.ZERO,aid)
+					for area_cc in last_area_wcc_arr:
+						TMLUtils.set_cell(utml,area_cc,0,Vector2i.ZERO,aid)
 				is_shift_dragging = true
 		"end_dragging":
 			if not control == "just_released_middle": 
