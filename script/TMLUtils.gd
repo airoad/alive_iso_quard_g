@@ -93,8 +93,8 @@ static func get_all_cc_in_screen_rect(start: Vector2i, end: Vector2i) -> Array[V
 static func get_all_cc_in_world_rect(start: Vector2i, end: Vector2i) -> Array[Dictionary]:
 	var ccs:Array[Dictionary] = []
 	var step = (end - start).sign()
-	if step.x == 0:step.x = 1
-	if step.y == 0:step.y = 1
+	step.x = 1 if step.x == 0 else step.x
+	step.y = 1 if step.y == 0 else step.y
 	for y in range(start.y,end.y+step.y,step.y):
 		for x in range(start.x,end.x+step.x,step.x):
 			var cc = Vector2i(x,y)
@@ -159,3 +159,15 @@ static func get_used_suround_neighbors(cc: Vector2i, tml:TileMapLayer)-> Diction
 
 static func set_cell(tml:TileMapLayer,cc:Vector2i,sid:int = 0, ac:Vector2i = Vector2i.ZERO, aid:int = 0)->void:
 	tml.set_cell(cc,sid,ac,aid)
+
+static func get_vcc_atlas_y(vcc: Vector2i, wcc: Vector2i, sid: int, is_border: bool, vtml:TileMapLayer) -> int:
+	if not is_border:
+		return 12
+	var idx = get_idx_of_vcc(vcc, wcc)
+	var nvcc_idxs = get_used_neighbors_by_sid(vcc, sid, vtml).values()
+	var ac_array: Array = ["0","0","0","0","0","0","0","0"] # 使用 Array 避免多次创建字符串
+	for i in nvcc_idxs:
+		ac_array[i] = "1"
+	var final_ac_str = "".join(ac_array) + "|" + str(idx) # <-- 字符串只拼接一次
+
+	return TMLUtils.EDGE_STR_AC_DIC.get(final_ac_str, 12) # 使用 get(key, default) 避免查找失败

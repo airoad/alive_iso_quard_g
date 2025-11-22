@@ -95,17 +95,10 @@ func refresh_wc_nc(wcc_border_state_dic:Dictionary,sid:int = curr_sid)->void:
 		for vcc in vcc_arr:
 			sid = vtml.get_cell_source_id(vcc)
 			var ac = vtml.get_cell_atlas_coords(vcc)
-			#ac.x = randi() % 2  
-			if border_state: #边界的vcc需要计算ac
-				var idx = TMLUtils.get_idx_of_vcc(vcc,wcc)
-				var ac_str = "00000000" + "|" + str(idx)
-				var nvcc_idxs = TMLUtils.get_used_neighbors_by_sid(vcc,sid,vtml).values()
-				for i in nvcc_idxs:
-					ac_str[i] = "1"
-				ac.y = TMLUtils.EDGE_STR_AC_DIC[ac_str]
-			else:#非边界直接用12
-				ac.y = 12
-			TMLUtils.set_cell(vtml,vcc,sid,ac)
+			var ac_y = TMLUtils.get_vcc_atlas_y(vcc, wcc, sid, border_state,vtml)
+			if ac_y != ac.y: # 边界处 ac.y 会产生变化，只在这种情况下更新
+				ac.y = ac_y
+				TMLUtils.set_cell(vtml,vcc,sid,ac)
 	#更新邻居
 	var need_refresh_ncc_dic = TMLUtils.get_used_neighbors_by_sid(wcc,sid,wtml,is_add)
 	for ncc in need_refresh_ncc_dic:
@@ -113,12 +106,8 @@ func refresh_wc_nc(wcc_border_state_dic:Dictionary,sid:int = curr_sid)->void:
 		for nvcc in nvccs:
 			var nsid = vtml.get_cell_source_id(nvcc)
 			var nac = vtml.get_cell_atlas_coords(nvcc)
-			if not (nsid == sid and nac.y == 12):
-				var nidx = TMLUtils.get_idx_of_vcc(nvcc,ncc)
-				var nac_str = "00000000" + "|" + str(nidx)
-				#ac.x = randi() % 2  
-				var nvcc_idxs = TMLUtils.get_used_neighbors_by_sid(nvcc,nsid,vtml).values()
-				for i in nvcc_idxs:
-					nac_str[i] = "1"
-				nac.y = TMLUtils.EDGE_STR_AC_DIC[nac_str]
+			#ac.x = randi() % 2
+			var nac_y = TMLUtils.get_vcc_atlas_y(nvcc, ncc, nsid, true, vtml) # 既然是删除，默认邻居是处在边界处
+			if nac_y != nac.y:
+				nac.y = nac_y
 				TMLUtils.set_cell(vtml,nvcc,nsid,nac)
